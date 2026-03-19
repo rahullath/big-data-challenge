@@ -145,17 +145,17 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - Test Random Forest with ntree and max_depth tuning (validates Requirement 8.2)
     - Test training with fewer samples than features (edge case)
 
-- [-] 7. Checkpoint - Verify Model Trainer
+- [x] 7. Checkpoint - Verify Model Trainer
   - Ensure all Model Trainer tests pass, ask the user if questions arise.
 
-- [ ] 8. Implement Model Evaluator module (model_evaluator.R)
-  - [ ] 8.1 Implement predict_model() function
+- [x] 8. Implement Model Evaluator module (model_evaluator.R)
+  - [x] 8.1 Implement predict_model() function
     - Handle LASSO predictions using predict.glmnet() with s=lambda_optimal
     - Handle Random Forest predictions using predict.ranger() or predict.randomForest()
     - Return numeric vector of predictions
     - _Requirements: 9.1, 9.2, 9.3 (prerequisite for evaluation)_
   
-  - [ ] 8.2 Implement calculate_metrics() function
+  - [x] 8.2 Implement calculate_metrics() function
     - Calculate MSE: mean((actual - predicted)^2)
     - Calculate MAE: mean(abs(actual - predicted))
     - Calculate R²: 1 - sum((actual - predicted)^2) / sum((actual - mean(actual))^2)
@@ -168,13 +168,13 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - **Property 17: R² Calculation**
     - **Validates: Requirements 9.1, 9.2, 9.3**
   
-  - [ ] 8.4 Implement evaluate_model() function
+  - [x] 8.4 Implement evaluate_model() function
     - Generate predictions using predict_model()
     - Calculate metrics using calculate_metrics()
     - Return predictions and metrics
     - _Requirements: 9.1, 9.2, 9.3_
   
-  - [ ] 8.5 Implement compare_models() function
+  - [x] 8.5 Implement compare_models() function
     - Create comparison table with metrics for both models
     - Identify best model by R² (highest), MSE (lowest), MAE (lowest)
     - Determine overall best model (prioritize R² as primary metric)
@@ -194,11 +194,11 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - Test evaluation with constant predictions
     - Test comparison with identical model performance
 
-- [ ] 9. Checkpoint - Verify Model Evaluator
+- [x] 9. Checkpoint - Verify Model Evaluator
   - Ensure all Model Evaluator tests pass, ask the user if questions arise.
 
-- [ ] 10. Implement main execution script (main.R)
-  - [ ] 10.1 Create main pipeline orchestration
+- [-] 10. Implement main execution script (main.R)
+  - [-] 10.1 Create main pipeline orchestration
     - Source all module files (data_preprocessor.R, feature_analyzer.R, model_trainer.R, model_evaluator.R, utils.R)
     - Load financial_dataset.csv using load_dataset()
     - Execute preprocessing pipeline: handle_missing_values(), split_dataset(), normalize_features()
