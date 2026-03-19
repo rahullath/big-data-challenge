@@ -13,8 +13,8 @@ This implementation plan breaks down the Stock Return Prediction System into dis
   - Install and load required R packages: glmnet, ranger (or randomForest), caret, dplyr, readr, testthat, hedgehog
   - _Requirements: All requirements (project foundation)_
 
-- [~] 2. Implement Data Preprocessor module (data_preprocessor.R)
-  - [ ] 2.1 Implement load_dataset() function
+- [x] 2. Implement Data Preprocessor module (data_preprocessor.R)
+  - [x] 2.1 Implement load_dataset() function
     - Load CSV file using readr::read_csv()
     - Validate presence of all 10 feature columns and target variable
     - Return detailed error messages for missing files or columns
@@ -24,7 +24,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - **Property 1: Column Validation Completeness**
     - **Validates: Requirements 1.3, 1.4**
   
-  - [ ] 2.3 Implement handle_missing_values() function
+  - [x] 2.3 Implement handle_missing_values() function
     - Identify rows with missing values using complete.cases()
     - Remove incomplete rows and log removal count
     - Return cleaned data and removed row count
@@ -34,7 +34,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - **Property 2: Missing Value Removal Completeness**
     - **Validates: Requirements 2.1, 2.2, 2.3**
   
-  - [ ] 2.5 Implement split_dataset() function
+  - [x] 2.5 Implement split_dataset() function
     - Set random seed for reproducibility
     - Split data into 80% training and 20% test sets
     - Ensure both sets contain all columns
@@ -46,7 +46,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - **Property 10: Split Column Preservation**
     - **Validates: Requirements 6.1, 6.2, 6.3**
   
-  - [ ] 2.7 Implement normalize_features() function
+  - [x] 2.7 Implement normalize_features() function
     - Calculate mean and standard deviation from training set only
     - Apply normalization to both train and test sets
     - Preserve target variable without transformation
@@ -65,10 +65,10 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - Test empty dataset after missing value removal
     - Test normalization with zero-variance features
 
-- [~] 3. Checkpoint - Verify Data Preprocessor
+- [x] 3. Checkpoint - Verify Data Preprocessor
   - Ensure all Data Preprocessor tests pass, ask the user if questions arise.
 
-- [ ] 4. Implement Feature Analyzer module (feature_analyzer.R)
+- [-] 4. Implement Feature Analyzer module (feature_analyzer.R)
   - [ ] 4.1 Implement compute_descriptive_statistics() function
     - Calculate mean, median, sd, min, max for all features and target
     - Format output as readable data.frame
@@ -83,7 +83,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - Return symmetric correlation matrix
     - _Requirements: 5.1, 5.2_
   
-  - [~] 4.4 Implement extract_target_correlations() function
+  - [ ] 4.4 Implement extract_target_correlations() function
     - Extract feature-target correlations from matrix
     - Sort by absolute correlation strength
     - _Requirements: 5.2, 5.3_
@@ -92,7 +92,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - **Property 7: Correlation Matrix Completeness**
     - **Validates: Requirements 5.1, 5.2, 5.3**
   
-  - [~] 4.6 Implement aggregate_feature_importance() function
+  - [ ] 4.6 Implement aggregate_feature_importance() function
     - Normalize LASSO coefficients and RF importance to [0,1] scale
     - Compute combined score as average of normalized values
     - Return top 5 features sorted by combined score
@@ -113,7 +113,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
 - [~] 5. Checkpoint - Verify Feature Analyzer
   - Ensure all Feature Analyzer tests pass, ask the user if questions arise.
 
-- [ ] 6. Implement Model Trainer module (model_trainer.R)
+- [~] 6. Implement Model Trainer module (model_trainer.R)
   - [ ] 6.1 Implement train_lasso_model() function
     - Prepare design matrix using model.matrix()
     - Train LASSO using cv.glmnet() with alpha=1 and 5-fold CV
@@ -127,7 +127,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - **Property 12: LASSO Feature Selection Output**
     - **Validates: Requirements 7.1, 7.3, 7.4**
   
-  - [~] 6.3 Implement train_random_forest_model() function
+  - [ ] 6.3 Implement train_random_forest_model() function
     - Use caret::train() or manual grid search for hyperparameter tuning
     - Tune ntree (100, 300, 500) and max_depth parameters
     - Extract feature importance scores from trained model
@@ -145,7 +145,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - Test Random Forest with ntree and max_depth tuning (validates Requirement 8.2)
     - Test training with fewer samples than features (edge case)
 
-- [~] 7. Checkpoint - Verify Model Trainer
+- [ ] 7. Checkpoint - Verify Model Trainer
   - Ensure all Model Trainer tests pass, ask the user if questions arise.
 
 - [ ] 8. Implement Model Evaluator module (model_evaluator.R)
@@ -155,7 +155,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - Return numeric vector of predictions
     - _Requirements: 9.1, 9.2, 9.3 (prerequisite for evaluation)_
   
-  - [~] 8.2 Implement calculate_metrics() function
+  - [ ] 8.2 Implement calculate_metrics() function
     - Calculate MSE: mean((actual - predicted)^2)
     - Calculate MAE: mean(abs(actual - predicted))
     - Calculate R²: 1 - sum((actual - predicted)^2) / sum((actual - mean(actual))^2)
@@ -194,11 +194,11 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - Test evaluation with constant predictions
     - Test comparison with identical model performance
 
-- [~] 9. Checkpoint - Verify Model Evaluator
+- [ ] 9. Checkpoint - Verify Model Evaluator
   - Ensure all Model Evaluator tests pass, ask the user if questions arise.
 
 - [ ] 10. Implement main execution script (main.R)
-  - [~] 10.1 Create main pipeline orchestration
+  - [ ] 10.1 Create main pipeline orchestration
     - Source all module files (data_preprocessor.R, feature_analyzer.R, model_trainer.R, model_evaluator.R, utils.R)
     - Load financial_dataset.csv using load_dataset()
     - Execute preprocessing pipeline: handle_missing_values(), split_dataset(), normalize_features()
@@ -241,7 +241,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - Write feature_importance.txt to output/ directory
     - _Requirements: All requirements (output documentation)_
 
-- [~] 11. Checkpoint - Verify main pipeline
+- [ ] 11. Checkpoint - Verify main pipeline
   - Ensure main.R runs end-to-end without errors, ask the user if questions arise.
 
 - [ ]* 12. Write integration tests (tests/testthat/test_integration.R)
