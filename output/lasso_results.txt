@@ -1,0 +1,24 @@
+LASSO Regression Model Results
+================================================================================ 
+
+Optimal Lambda: 0.007433
+Selected Features: 10 out of 10
+
+Selected Feature Names:
+revenue_growth, profit_margin, debt_to_equity, pe_ratio, volatility, market_cap, interest_rate, inflation_rate, sector_score, previous_return 
+
+Coefficients:
+ revenue_growth   profit_margin  debt_to_equity        pe_ratio      volatility 
+         1.4435          2.9770         -1.2758          0.0689         -0.9764 
+     market_cap   interest_rate  inflation_rate    sector_score previous_return 
+         0.0402         -0.0731          0.0544         -0.0473          0.9736 
+
+
+Eliminated Features:
+None (all features selected)
+
+
+Test Set Performance:
+  MSE: 3.741324
+  MAE: 1.536139
+  R²: 0.784167

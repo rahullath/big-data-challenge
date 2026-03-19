@@ -31,8 +31,16 @@ train_lasso_model <- function(train_data, target_col = "future_return", nfolds =
   set.seed(seed)
   
   # Validate inputs
+  if (nrow(train_data) == 0) {
+    stop("Cannot train LASSO model: training dataset is empty")
+  }
+  
   if (!target_col %in% colnames(train_data)) {
     stop(sprintf("Target column '%s' not found in training data.", target_col))
+  }
+  
+  if (nfolds < 2) {
+    stop(sprintf("Invalid nfolds: %d. Must be at least 2 for cross-validation.", nfolds))
   }
   
   if (nrow(train_data) < nfolds) {
@@ -42,6 +50,16 @@ train_lasso_model <- function(train_data, target_col = "future_return", nfolds =
   
   # Prepare feature matrix and target vector
   feature_cols <- setdiff(colnames(train_data), target_col)
+  
+  if (length(feature_cols) == 0) {
+    stop("No feature columns found in training data (only target column present)")
+  }
+  
+  # Check for sufficient training data relative to features
+  if (nrow(train_data) < length(feature_cols)) {
+    warning(sprintf("Training data has fewer samples (%d) than features (%d). Model may overfit.", 
+                    nrow(train_data), length(feature_cols)))
+  }
   
   # Create design matrix (excluding intercept as glmnet adds it automatically)
   X <- as.matrix(train_data[, feature_cols])
@@ -133,12 +151,26 @@ train_random_forest_model <- function(train_data, target_col = "future_return", 
   set.seed(seed)
   
   # Validate inputs
+  if (nrow(train_data) == 0) {
+    stop("Cannot train Random Forest model: training dataset is empty")
+  }
+  
   if (!target_col %in% colnames(train_data)) {
     stop(sprintf("Target column '%s' not found in training data.", target_col))
   }
   
   # Prepare feature columns and target
   feature_cols <- setdiff(colnames(train_data), target_col)
+  
+  if (length(feature_cols) == 0) {
+    stop("No feature columns found in training data (only target column present)")
+  }
+  
+  # Check for sufficient training data
+  if (nrow(train_data) < 10) {
+    warning(sprintf("Training data has only %d rows. Random Forest may not perform well with very small datasets.", 
+                    nrow(train_data)))
+  }
   
   # Define hyperparameter grid for tuning
   ntree_values <- c(100, 300, 500)

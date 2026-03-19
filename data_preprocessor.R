@@ -19,6 +19,11 @@ load_dataset <- function(file_path) {
     "future_return"
   )
   
+  # Check if file exists before attempting to load
+  if (!file.exists(file_path)) {
+    stop(sprintf("Dataset file does not exist: '%s'", file_path))
+  }
+  
   # Load CSV file with error handling
   data <- tryCatch({
     readr::read_csv(file_path, show_col_types = FALSE)
@@ -32,6 +37,24 @@ load_dataset <- function(file_path) {
     stop(sprintf("Missing required columns: %s", paste(missing_cols, collapse = ", ")))
   }
   
+  # Validate dataset is not empty
+  if (nrow(data) == 0) {
+    stop("Dataset is empty (contains zero rows)")
+  }
+  
+  # Validate column types - all required columns must be numeric
+  non_numeric_cols <- character(0)
+  for (col in required_cols) {
+    if (!is.numeric(data[[col]])) {
+      non_numeric_cols <- c(non_numeric_cols, col)
+    }
+  }
+  
+  if (length(non_numeric_cols) > 0) {
+    stop(sprintf("Non-numeric columns detected (all columns must be numeric): %s", 
+                 paste(non_numeric_cols, collapse = ", ")))
+  }
+  
   return(data)
 }
 
@@ -40,6 +63,11 @@ load_dataset <- function(file_path) {
 #' @param data Input data.frame
 #' @return List containing cleaned_data and removed_count
 handle_missing_values <- function(data) {
+  # Validate input
+  if (nrow(data) == 0) {
+    stop("Cannot handle missing values: input dataset is empty")
+  }
+  
   # Identify complete rows
   complete_rows <- complete.cases(data)
   
@@ -48,6 +76,11 @@ handle_missing_values <- function(data) {
   
   # Remove incomplete rows
   cleaned_data <- data[complete_rows, ]
+  
+  # Check if all rows were removed
+  if (nrow(cleaned_data) == 0) {
+    stop("All rows removed due to missing values. Dataset is empty after cleaning.")
+  }
   
   # Log removal count
   if (removed_count > 0) {
@@ -67,12 +100,33 @@ handle_missing_values <- function(data) {
 #' @param seed Random seed for reproducibility (default 42)
 #' @return List containing train and test data.frames
 split_dataset <- function(data, train_ratio = 0.8, seed = 42) {
-  # Set random seed for reproducibility
-  set.seed(seed)
+  # Validate input dataset
+  if (nrow(data) == 0) {
+    stop("Cannot split dataset: input dataset is empty")
+  }
   
-  # Calculate number of training samples
+  # Validate train_ratio
+  if (!is.numeric(train_ratio) || train_ratio <= 0 || train_ratio >= 1) {
+    stop(sprintf("Invalid train_ratio: %.2f. Must be between 0 and 1 (exclusive)", train_ratio))
+  }
+  
+  # Check if dataset has enough rows for meaningful split
   n <- nrow(data)
   n_train <- floor(n * train_ratio)
+  n_test <- n - n_train
+  
+  if (n_train < 1) {
+    stop(sprintf("Train set would be empty with train_ratio=%.2f and %d rows. Increase train_ratio or dataset size.", 
+                 train_ratio, n))
+  }
+  
+  if (n_test < 1) {
+    stop(sprintf("Test set would be empty with train_ratio=%.2f and %d rows. Decrease train_ratio or dataset size.", 
+                 train_ratio, n))
+  }
+  
+  # Set random seed for reproducibility
+  set.seed(seed)
   
   # Randomly sample training indices
   train_indices <- sample(1:n, n_train)
@@ -94,8 +148,29 @@ split_dataset <- function(data, train_ratio = 0.8, seed = 42) {
 #' @param target_col Name of target variable to exclude from normalization
 #' @return List containing train_normalized, test_normalized, and normalization_params
 normalize_features <- function(train_data, test_data, target_col = "future_return") {
+  # Validate inputs
+  if (nrow(train_data) == 0) {
+    stop("Cannot normalize features: training dataset is empty")
+  }
+  
+  if (nrow(test_data) == 0) {
+    stop("Cannot normalize features: test dataset is empty")
+  }
+  
+  if (!target_col %in% colnames(train_data)) {
+    stop(sprintf("Target column '%s' not found in training data", target_col))
+  }
+  
+  if (!target_col %in% colnames(test_data)) {
+    stop(sprintf("Target column '%s' not found in test data", target_col))
+  }
+  
   # Identify feature columns (exclude target)
   feature_cols <- setdiff(colnames(train_data), target_col)
+  
+  if (length(feature_cols) == 0) {
+    stop("No feature columns found for normalization (only target column present)")
+  }
   
   # Calculate mean and standard deviation from training set only
   means <- sapply(train_data[, feature_cols], mean)

@@ -23,39 +23,67 @@ predict_model <- function(model, test_data, model_type = c("lasso", "rf"),
   # Validate model_type
   model_type <- match.arg(model_type)
   
+  # Validate inputs
+  if (is.null(model)) {
+    stop("Model object is NULL. Cannot generate predictions.")
+  }
+  
+  if (nrow(test_data) == 0) {
+    stop("Cannot generate predictions: test dataset is empty")
+  }
+  
   # Prepare feature matrix (exclude target column)
   feature_cols <- setdiff(colnames(test_data), target_col)
   
-  # Generate predictions based on model type
-  if (model_type == "lasso") {
-    # LASSO predictions using glmnet
-    if (is.null(lambda_optimal)) {
-      stop("lambda_optimal is required for LASSO predictions")
-    }
-    
-    # Prepare design matrix
-    X_test <- as.matrix(test_data[, feature_cols])
-    
-    # Generate predictions at optimal lambda
-    predictions <- as.vector(predict(model, newx = X_test, s = lambda_optimal))
-    
-  } else if (model_type == "rf") {
-    # Random Forest predictions
-    # Check if model is ranger or randomForest
-    if (inherits(model, "ranger")) {
-      # Use ranger predict
-      pred_result <- predict(model, data = test_data)
-      predictions <- pred_result$predictions
-    } else if (inherits(model, "randomForest")) {
-      # Use randomForest predict
-      predictions <- predict(model, newdata = test_data)
-    } else {
-      stop("Unknown Random Forest model type. Expected 'ranger' or 'randomForest' object.")
-    }
+  if (length(feature_cols) == 0) {
+    stop("No feature columns found in test data for prediction")
   }
+  
+  # Generate predictions based on model type
+  predictions <- tryCatch({
+    if (model_type == "lasso") {
+      # LASSO predictions using glmnet
+      if (is.null(lambda_optimal)) {
+        stop("lambda_optimal is required for LASSO predictions")
+      }
+      
+      # Prepare design matrix
+      X_test <- as.matrix(test_data[, feature_cols])
+      
+      # Generate predictions at optimal lambda
+      as.vector(predict(model, newx = X_test, s = lambda_optimal))
+      
+    } else if (model_type == "rf") {
+      # Random Forest predictions
+      # Check if model is ranger or randomForest
+      if (inherits(model, "ranger")) {
+        # Use ranger predict
+        pred_result <- predict(model, data = test_data)
+        pred_result$predictions
+      } else if (inherits(model, "randomForest")) {
+        # Use randomForest predict
+        predict(model, newdata = test_data)
+      } else {
+        stop("Unknown Random Forest model type. Expected 'ranger' or 'randomForest' object.")
+      }
+    }
+  }, error = function(e) {
+    stop(sprintf("Prediction generation failed for %s model: %s", 
+                 toupper(model_type), e$message))
+  })
   
   # Ensure predictions are numeric vector
   predictions <- as.numeric(predictions)
+  
+  # Validate predictions were generated
+  if (length(predictions) == 0) {
+    stop("Prediction generation failed: no predictions returned")
+  }
+  
+  if (length(predictions) != nrow(test_data)) {
+    stop(sprintf("Prediction count mismatch: expected %d predictions, got %d", 
+                 nrow(test_data), length(predictions)))
+  }
   
   return(predictions)
 }
@@ -79,11 +107,25 @@ predict_model <- function(model, test_data, model_type = c("lasso", "rf"),
 calculate_metrics <- function(actual, predicted) {
   # Validate inputs
   if (length(actual) != length(predicted)) {
-    stop("Length of actual and predicted vectors must match")
+    stop(sprintf("Length mismatch: actual has %d values, predicted has %d values", 
+                 length(actual), length(predicted)))
   }
   
   if (length(actual) == 0) {
     stop("Cannot calculate metrics on empty vectors")
+  }
+  
+  if (!is.numeric(actual) || !is.numeric(predicted)) {
+    stop("Both actual and predicted values must be numeric")
+  }
+  
+  # Check for NA or infinite values
+  if (any(is.na(actual)) || any(is.na(predicted))) {
+    stop("Cannot calculate metrics: NA values detected in actual or predicted values")
+  }
+  
+  if (any(is.infinite(actual)) || any(is.infinite(predicted))) {
+    stop("Cannot calculate metrics: infinite values detected in actual or predicted values")
   }
   
   # Calculate Mean Squared Error
@@ -99,9 +141,9 @@ calculate_metrics <- function(actual, predicted) {
   ss_res <- sum((actual - predicted)^2)
   ss_tot <- sum((actual - mean(actual))^2)
   
-  # Handle edge case where all actual values are the same
+  # Handle edge case where all actual values are the same (zero variance)
   if (ss_tot == 0) {
-    warning("All actual values are identical. R² is undefined, returning NA.")
+    warning("All actual values are identical (zero variance). R² is undefined, returning NA.")
     r_squared <- NA
   } else {
     r_squared <- 1 - (ss_res / ss_tot)
@@ -140,6 +182,15 @@ evaluate_model <- function(model, test_data, target_col = "future_return",
   # Validate model_type
   model_type <- match.arg(model_type)
   
+  # Validate inputs
+  if (is.null(model)) {
+    stop("Model object is NULL. Cannot evaluate model.")
+  }
+  
+  if (nrow(test_data) == 0) {
+    stop("Cannot evaluate model: test dataset is empty")
+  }
+  
   # Validate that target column exists
   if (!target_col %in% colnames(test_data)) {
     stop(sprintf("Target column '%s' not found in test data", target_col))
@@ -148,24 +199,41 @@ evaluate_model <- function(model, test_data, target_col = "future_return",
   # Extract actual values
   actual <- test_data[[target_col]]
   
+  # Validate actual values
+  if (any(is.na(actual))) {
+    stop("Target column contains NA values in test data")
+  }
+  
   # Generate predictions using predict_model()
-  predictions <- predict_model(
-    model = model,
-    test_data = test_data,
-    model_type = model_type,
-    lambda_optimal = lambda_optimal,
-    target_col = target_col
-  )
+  predictions <- tryCatch({
+    predict_model(
+      model = model,
+      test_data = test_data,
+      model_type = model_type,
+      lambda_optimal = lambda_optimal,
+      target_col = target_col
+    )
+  }, error = function(e) {
+    stop(sprintf("Model evaluation failed during prediction: %s", e$message))
+  })
   
   # Calculate metrics using calculate_metrics()
-  metrics <- calculate_metrics(actual, predictions)
+  metrics <- tryCatch({
+    calculate_metrics(actual, predictions)
+  }, error = function(e) {
+    stop(sprintf("Model evaluation failed during metric calculation: %s", e$message))
+  })
   
   # Log evaluation results
   log_message(sprintf("%s model evaluation completed", 
                       ifelse(model_type == "lasso", "LASSO", "Random Forest")))
   log_message(sprintf("  MSE: %.6f", metrics$mse))
   log_message(sprintf("  MAE: %.6f", metrics$mae))
-  log_message(sprintf("  R²: %.6f", metrics$r_squared))
+  if (!is.na(metrics$r_squared)) {
+    log_message(sprintf("  R²: %.6f", metrics$r_squared))
+  } else {
+    log_message("  R²: NA (zero variance in actual values)")
+  }
   
   # Return predictions and metrics
   return(list(

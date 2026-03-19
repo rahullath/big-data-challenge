@@ -1,0 +1,16 @@
+Feature Importance Analysis
+================================================================================ 
+
+LASSO Feature Selection:
+-------------------------------------------------------------------------------- 
+Selected: 10 features
+Eliminated: 0 features
+
+Top 5 Most Influential Features (aggregated from both models):
+-------------------------------------------------------------------------------- 
+                        feature lasso_importance rf_importance combined_score
+profit_margin     profit_margin        1.0000000     1.0000000      1.0000000
+revenue_growth   revenue_growth        0.4848959     0.2913591      0.3881275
+debt_to_equity   debt_to_equity        0.4285616     0.2351252      0.3318434
+previous_return previous_return        0.3270293     0.1917448      0.2593870
+volatility           volatility        0.3279877     0.1800768      0.2540322

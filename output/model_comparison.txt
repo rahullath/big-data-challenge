@@ -1,0 +1,15 @@
+Model Performance Comparison
+================================================================================ 
+
+          Model      MSE      MAE R_Squared
+1         LASSO 3.741324 1.536139 0.7841675
+2 Random Forest 5.695227 1.879555 0.6714491
+
+
+Best Model by Metric:
+-------------------------------------------------------------------------------- 
+Best by R²: LASSO
+Best by MSE: LASSO
+Best by MAE: LASSO
+
+Overall Best Model: LASSO

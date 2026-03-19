@@ -1,0 +1,18 @@
+Random Forest Model Results
+================================================================================ 
+
+Best Parameters:
+  Number of Trees: 300
+  Maximum Depth: 15
+
+Feature Importance (all features):
+  profit_margin  revenue_growth  debt_to_equity previous_return      volatility 
+      5791.9221       1687.5292       1361.8270       1110.5708       1042.9908 
+  interest_rate        pe_ratio  inflation_rate      market_cap    sector_score 
+       506.8276        498.3129        497.4076        482.5223        289.7837 
+
+
+Test Set Performance:
+  MSE: 5.695227
+  MAE: 1.879555
+  R²: 0.671449

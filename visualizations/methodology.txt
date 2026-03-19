@@ -1,0 +1,33 @@
+
+STOCK RETURN PREDICTION SYSTEM - METHODOLOGY
+
+1. DATA PREPROCESSING
+   ├─ Load financial_dataset.csv (1000 samples, 10 features)
+   ├─ Handle missing values (remove incomplete rows)
+   ├─ Split: 80% Training (800) / 20% Test (200)
+   └─ Normalize features (mean=0, sd=1)
+
+2. EXPLORATORY ANALYSIS
+   ├─ Descriptive statistics (mean, median, sd, min, max)
+   ├─ Correlation analysis (feature relationships)
+   └─ Feature-target correlation ranking
+
+3. MODEL TRAINING
+   ├─ LASSO Regression
+   │  ├─ 5-fold cross-validation
+   │  ├─ Optimal lambda selection
+   │  └─ Feature selection via L1 regularization
+   └─ Random Forest
+      ├─ Hyperparameter tuning (ntree, max_depth)
+      ├─ Out-of-bag error estimation
+      └─ Feature importance extraction
+
+4. MODEL EVALUATION
+   ├─ Performance metrics: MSE, MAE, R²
+   ├─ Model comparison
+   └─ Best model selection
+
+5. FEATURE IMPORTANCE ANALYSIS
+   ├─ Aggregate importance from both models
+   └─ Identify top 5 influential features
+
