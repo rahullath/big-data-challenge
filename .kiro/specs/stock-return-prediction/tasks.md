@@ -110,11 +110,11 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - Test single-row dataset handling
     - Test perfectly correlated features
 
-- [-] 5. Checkpoint - Verify Feature Analyzer
+- [x] 5. Checkpoint - Verify Feature Analyzer
   - Ensure all Feature Analyzer tests pass, ask the user if questions arise.
 
-- [~] 6. Implement Model Trainer module (model_trainer.R)
-  - [ ] 6.1 Implement train_lasso_model() function
+- [x] 6. Implement Model Trainer module (model_trainer.R)
+  - [x] 6.1 Implement train_lasso_model() function
     - Prepare design matrix using model.matrix()
     - Train LASSO using cv.glmnet() with alpha=1 and 5-fold CV
     - Select lambda.min as optimal regularization parameter
@@ -127,7 +127,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - **Property 12: LASSO Feature Selection Output**
     - **Validates: Requirements 7.1, 7.3, 7.4**
   
-  - [ ] 6.3 Implement train_random_forest_model() function
+  - [x] 6.3 Implement train_random_forest_model() function
     - Use caret::train() or manual grid search for hyperparameter tuning
     - Tune ntree (100, 300, 500) and max_depth parameters
     - Extract feature importance scores from trained model
@@ -145,7 +145,7 @@ This implementation plan breaks down the Stock Return Prediction System into dis
     - Test Random Forest with ntree and max_depth tuning (validates Requirement 8.2)
     - Test training with fewer samples than features (edge case)
 
-- [ ] 7. Checkpoint - Verify Model Trainer
+- [-] 7. Checkpoint - Verify Model Trainer
   - Ensure all Model Trainer tests pass, ask the user if questions arise.
 
 - [ ] 8. Implement Model Evaluator module (model_evaluator.R)
