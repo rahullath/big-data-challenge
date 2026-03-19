@@ -1,0 +1,66 @@
+Task - 
+DocViewer
+Page
+of 5
+Pages
+Predication challenge
+19/03/2026
+Introduction
+• Predicting stock returns is a fundamental problem in financial
+analytics.
+• Traditional linear models often struggle to capture complex
+relationships in financial data, while modern machine learning
+techniques can model nonlinear patterns more effectively.
+• This assignment explores and compares three approaches:
+• LASSO Regression (Linear + Regularization)
+• Random Forest (Ensemble Learning)
+• Artificial Neural Networks
+• SVM
+• The goal is to evaluate their performance on the financial
+dataset and understand their strengths and limitations.
+Variable Description
+revenue_growth Annual revenue growth (%)
+profit_margin Net profit margin (%)
+debt_to_equity Financial leverage ratio
+pe_ratio Price-to-earnings ratio
+volatility Stock return volatility
+market_cap Market capitalization (billions)
+interest_rate Interest rate (%)
+inflation_rate Inflation rate (%)
+sector_score Sector performance index
+previous_return Previous year return (%)
+Target Variable (y)
+•future_return: Predicted stock return for the next year (%)
+Data description
+Steps
+1. Data Preprocessing
+• Handle missing values (if any)
+• Normalize/standardize features
+• Make descriptive statistics
+• Make correlations across the features
+• Split data into training and testing sets (80/20)
+2. Model Implementation
+LASSO Regression
+• Train model with cross-validated regularization parameter
+• Identify selected (non-zero) features
+Random Forest
+• Train model with tuned hyperparameters
+• Extract feature importance
+Artificial Neural Network (ANN)
+• Build a Multi-Layer Perceptron
+• Input layer
+• At least 1 hidden layer
+SVM regression
+• Use RBF kernel
+3. Model Evaluation
+• Mean Squared Error (MSE) / Mean
+Absolute Error (MAE)
+• R² Score
+Reflective questions
+• Which model performed best and why?
+• Did LASSO eliminate any features? What does this imply?
+• How did Random Forest handle nonlinear relationships?
+• Did the ANN show signs of overfitting?
+• Which features are most influential in predicting returns?
+Annotations
+
